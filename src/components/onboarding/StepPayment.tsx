@@ -29,9 +29,47 @@ const StepPayment = () => {
 
   const validate = () => {
     const newErrors: Record<string, string> = {};
-    if (!cardNumber.trim()) newErrors.cardNumber = "Card number is required";
-    if (!expiryDate.trim()) newErrors.expiryDate = "Expiry date is required";
-    if (!cvv.trim()) newErrors.cvv = "CVV is required";
+
+    const cardDigits = cardNumber.replace(/\D/g, "");
+    const cvvDigits = cvv.replace(/\D/g, "");
+
+    if (!cardNumber.trim()) {
+      newErrors.cardNumber = "Card number is required";
+    } else if (cardDigits.length !== 12) {
+      newErrors.cardNumber = "Enter valid card number";
+    }
+
+    if (!expiryDate.trim()) {
+      newErrors.expiryDate = "Expiry date is required";
+    } else {
+      const match = expiryDate.match(/^(\d{2})\/(\d{2})$/);
+
+      if (!match) {
+        newErrors.expiryDate = "Enter valid expiry";
+      } else {
+        const month = parseInt(match[1], 10);
+        const year = parseInt(match[2], 10) + 2000;
+
+        if (month < 1 || month > 12) {
+          newErrors.expiryDate = "Enter valid expiry";
+        } else {
+          const now = new Date();
+          const currentMonth = now.getMonth() + 1;
+          const currentYear = now.getFullYear();
+
+          if (year < currentYear || (year === currentYear && month < currentMonth)) {
+            newErrors.expiryDate = "Enter valid expiry";
+          }
+        }
+      }
+    }
+
+    if (!cvv.trim()) {
+      newErrors.cvv = "CVV is required";
+    } else if (!(cvvDigits.length === 2 || cvvDigits.length === 3)) {
+      newErrors.cvv = "Enter valid cvv";
+    }
+
     setErrors(newErrors);
     return Object.keys(newErrors).length === 0;
   };
