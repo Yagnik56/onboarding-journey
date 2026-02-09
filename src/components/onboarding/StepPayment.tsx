@@ -35,7 +35,7 @@ const StepPayment = () => {
 
     if (!cardNumber.trim()) {
       newErrors.cardNumber = "Card number is required";
-    } else if (cardDigits.length !== 12) {
+    } else if (cardDigits.length !== 16) {
       newErrors.cardNumber = "Enter valid card number";
     }
 
